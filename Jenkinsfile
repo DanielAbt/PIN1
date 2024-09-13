@@ -48,8 +48,8 @@ pipeline {
     always {
       // Clean images
       sh '''
-      docker rmi ${IMAGE_NAME} || true
-      docker rmi ${REGISTRY}/daniel-repo/${IMAGE_NAME} || true
+      docker rmi ${IMAGE_NAME} --force || true
+      docker rmi ${REGISTRY}/daniel-repo/${IMAGE_NAME} --force || true
       '''
     }
   }
