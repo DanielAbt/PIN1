@@ -44,4 +44,13 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      // Clean images
+      sh '''
+      docker rmi ${IMAGE_NAME} || true
+      docker rmi ${REGISTRY}/daniel-repo/${IMAGE_NAME} || true
+      '''
+    }
+  }
 }

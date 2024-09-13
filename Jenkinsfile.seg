@@ -16,27 +16,37 @@ pipeline {
           sh '''
           docker build -t ${IMAGE_NAME} .
              '''  
-        }
+      }
     }
-  
   
     stage('Run tests') {
       steps {
         sh "docker run ${IMAGE_NAME} npm test"
       }
     }
-   stage('Deploy Image') {
+   
+    stage('Deploy Image') {
       steps{
         sh '''
         docker tag ${IMAGE_NAME} ${REGISTRY}/daniel-repo/${IMAGE_NAME}
         docker push ${REGISTRY}/daniel-repo/${IMAGE_NAME}   
         '''
         }
-      }
-   stage('Vulnerability Scan - Docker ') {
-        steps {
-          sh "docker run  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity=CRITICAL ${REGISTRY}/daniel-repo/${IMAGE_NAME}"
-            }
-        }
     }
+    stage('Vulnerability Scan - Docker ') {
+      steps {
+        sh "docker run  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity=CRITICAL ${REGISTRY}/daniel-repo/${IMAGE_NAME}"
+      }
+    }
+  }
+  
+  post {
+    always {
+      // Clean images
+      sh '''
+      docker rmi ${IMAGE_NAME} || true
+      docker rmi ${REGISTRY}/daniel-repo/${IMAGE_NAME} || true
+      '''
+    }
+  }
 }
