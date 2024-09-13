@@ -22,16 +22,17 @@ pipeline {
         sh "docker run ${IMAGE_NAME} npm test"
       }
     }
-
-    steps {
-        // Utiliza withCredentials para manejar las credenciales de forma segura
-        withCredentials([usernamePassword(credentialsId: 'nexus-id', 
-                          usernameVariable: 'NEXUS_USERNAME', 
-                          passwordVariable: 'NEXUS_PASSWORD')]) {
-            sh """
-            echo ${NEXUS_PASSWORD} | docker login ${REGISTRY} --username ${NEXUS_USERNAME} --password-stdin
-            """
-        }
+    
+    stage('Login to Nexus') {
+      steps {
+          withCredentials([usernamePassword(credentialsId: 'nexus-id', 
+                            usernameVariable: 'NEXUS_USERNAME', 
+                            passwordVariable: 'NEXUS_PASSWORD')]) {
+              sh """
+              echo ${NEXUS_PASSWORD} | docker login ${REGISTRY} --username ${NEXUS_USERNAME} --password-stdin
+              """
+          }
+      }
     }
 
     stage('Deploy Image') {
