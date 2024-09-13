@@ -6,20 +6,20 @@ pipeline {
   }
 
   environment {
-    ARTIFACT_ID = "elbuo8/webapp:${env.BUILD_NUMBER}" // Variable de entorno para el ID del artefacto
+    IMAGE_NAME = "testapp"
     REGISTRY = "127.0.0.1:8083"
   }
 
   stages {
     stage('Building image') {
       steps {
-        sh "docker build -t testapp ."
+        sh "docker build -t ${IMAGE_NAME} ."
       }
     }
 
     stage('Run tests') {
       steps {
-        sh 'docker run testapp npm test'
+        sh "docker run ${IMAGE_NAME} npm test"
       }
     }
 
@@ -37,8 +37,8 @@ pipeline {
     stage('Deploy Image') {
       steps {
         sh '''
-          docker tag testapp ${REGISTRY}/daniel-repo/testapp
-          docker push ${REGISTRY}/daniel-repo/testapp   
+          docker tag testapp ${REGISTRY}/daniel-repo/${IMAGE_NAME}
+          docker push ${REGISTRY}/daniel-repo/${IMAGE_NAME}   
         '''
       }
     }
