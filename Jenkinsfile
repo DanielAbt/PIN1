@@ -26,8 +26,8 @@ pipeline {
    stage('Deploy Image') {
       steps{
         sh '''
-        docker tag testapp 127.0.0.1:5000/daniel-repo/testapp
-        docker push 127.0.0.1:5000/daniel-repo/testapp   
+        docker tag testapp 127.0.0.1:8083/daniel-repo/testapp
+        docker push 127.0.0.1:8083/daniel-repo/testapp   
         '''
         }
       }
